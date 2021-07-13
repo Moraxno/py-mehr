@@ -3,9 +3,7 @@ import pytest
 from mehr import switch
 from mehr.exceptions import \
     CaseAfterDefaultException, \
-    SameCaseException, \
-    DoubleDefaultException, \
-    NoDefaultException
+    DoubleDefaultException
 
 
 def test_normaluse():
@@ -26,6 +24,7 @@ def test_normaluse():
             j = -1
 
     assert(j == 5)
+
 
 def test_caseafterdefault_does_raise():
     with pytest.raises(CaseAfterDefaultException):
@@ -52,6 +51,7 @@ def test_doubledefault_does_raise():
             if default():
                 pass
 
+
 def test_samecase_doesnt_raise():
     j = 0
     with switch(2) as (case, default, break_):
@@ -65,6 +65,7 @@ def test_samecase_doesnt_raise():
             pass
 
     assert(j == 3)
+
 
 def test_samecase_doesnt_raise_after_break():
     j = 0
@@ -83,6 +84,7 @@ def test_samecase_doesnt_raise_after_break():
 
     assert(j == 42)
 
+
 def test_unexpected_nameerror():
     with switch(52) as (case, default, break_):
         if case(1):
@@ -91,6 +93,6 @@ def test_unexpected_nameerror():
             j = 2
         if case(2):
             j = 3
-    
+
     with pytest.raises(NameError):
-        x = (j == 0)
+        _ = (j == 0)

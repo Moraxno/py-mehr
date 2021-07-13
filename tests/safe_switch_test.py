@@ -27,6 +27,7 @@ def test_normaluse():
 
     assert(j == 5)
 
+
 def test_caseafterdefault_does_raise():
     with pytest.raises(CaseAfterDefaultException):
         with safe_switch(42) as (case, default, break_):
@@ -52,6 +53,7 @@ def test_doubledefault_does_raise():
             if default():
                 pass
 
+
 def test_samecase_does_raise():
     with pytest.raises(SameCaseException):
         with safe_switch(2) as (case, default, break_):
@@ -65,6 +67,17 @@ def test_samecase_does_raise():
                 pass
 
 
+def test_nodefault_does_raise():
+    with pytest.raises(NoDefaultException):
+        with safe_switch(52) as (case, default, break_):
+            if case(1):
+                pass
+            if case(2):
+                pass
+            if case(52):
+                pass
+
+
 def test_samecase_dominates_nodefault():
     with pytest.raises(SameCaseException):
         with safe_switch(52) as (case, default, break_):
@@ -74,6 +87,7 @@ def test_samecase_dominates_nodefault():
                 pass
             if case(2):
                 pass
+
 
 def test_samecase_raises_even_after_break():
     with pytest.raises(SameCaseException):
@@ -86,4 +100,3 @@ def test_samecase_raises_even_after_break():
                 break_()
             if case(2):
                 pass
-    

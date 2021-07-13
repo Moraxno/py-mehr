@@ -7,10 +7,11 @@ from mehr.exceptions import \
     NoDefaultException, \
     BreakNotification
 
+
 class SwitchMode(Enum):
     STEPPING = 0
     ACTIVE = 1
-    STOPPED  = 2
+    STOPPED = 2
     DEFAULTED = 3
 
 
@@ -25,8 +26,10 @@ class SwitchStatement:
                lambda: self._break()
 
     def __exit__(self, type_, value, traceback):
-        if type_ is type(BreakNotification()):
+        if value is None or isinstance(value, BreakNotification):
             return True
+        else:
+            return False
 
     def _case(self, x):
         if self._mode == SwitchMode.DEFAULTED:
@@ -54,11 +57,11 @@ class SwitchStatement:
 class SafeSwitchStatement(SwitchStatement):
     def __init__(self, value):
         super().__init__(value)
-        self._tracker = [] 
+        self._tracker = []
 
     def _case(self, x):
         result = super()._case(x)
-        
+
         if x in self._tracker:
             raise SameCaseException(x)
 
@@ -71,10 +74,17 @@ class SafeSwitchStatement(SwitchStatement):
     def __exit__(self, type_, value, traceback):
         if type_ is None and self._mode != SwitchMode.DEFAULTED:
             raise NoDefaultException()
+        elif self._mode == SwitchMode.DEFAULTED:
+            return True
+        else:
+            return False
 
 
 def switch(x):
+    """ Enters a context and returns three callables: `case`, `default` and `break`.
+    """
     return SwitchStatement(x)
+
 
 def safe_switch(x):
     return SafeSwitchStatement(x)
