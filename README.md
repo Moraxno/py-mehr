@@ -1,2 +1,3 @@
-# py-mehr
-Python package hosting toolboxes and helper functions
+# mehr
+
+Python package hosting toolboxes and helper functions.
