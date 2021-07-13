@@ -60,7 +60,7 @@ class SafeSwitchStatement(SwitchStatement):
         result = super()._case(x)
         
         if x in self._tracker:
-            raise DoubleCaseException(x)
+            raise SameCaseException(x)
 
         self._tracker.append(x)
         return result
