@@ -28,8 +28,8 @@ class SwitchStatement:
     def __exit__(self, type_, value, traceback):
         if value is None or isinstance(value, BreakNotification):
             return True
-        else:
-            return False
+        elif value is not None:
+            raise value
 
     def _case(self, x):
         if self._mode == SwitchMode.DEFAULTED:
@@ -46,7 +46,7 @@ class SwitchStatement:
         if self._mode == SwitchMode.DEFAULTED:
             raise DoubleDefaultException()
 
-        result = self._mode == SwitchMode.ACTIVE
+        result = (self._mode == SwitchMode.ACTIVE)
         self._mode = SwitchMode.DEFAULTED
         return result
 
@@ -72,12 +72,12 @@ class SafeSwitchStatement(SwitchStatement):
         self._mode = SwitchMode.STOPPED
 
     def __exit__(self, type_, value, traceback):
-        if type_ is None and self._mode != SwitchMode.DEFAULTED:
+        if value is None and self._mode != SwitchMode.DEFAULTED:
             raise NoDefaultException()
-        elif self._mode == SwitchMode.DEFAULTED:
-            return True
+        elif value is not None:
+            raise value
         else:
-            return False
+            return True
 
 
 def switch(x):
