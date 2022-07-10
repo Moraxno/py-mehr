@@ -3,13 +3,15 @@ from types import TracebackType
 from typing import Any, List, Optional, Type, Union
 from typing_extensions import Self
 from tqdm import tqdm
-from io import StringIO, SEEK_CUR, SEEK_END, SEEK_SET
+from io import SEEK_CUR, SEEK_END, SEEK_SET
 
 SeekMode = Union[type(SEEK_SET), type(SEEK_CUR), type(SEEK_END)]
 
 
 class StreamProgressWrapper(io.IOBase):
-    def __init__(self, stream: io.IOBase, *, desc: str = "", expected_size=None, guess_size=True):
+    def __init__(
+        self, stream: io.IOBase, *, desc: str = "", expected_size=None, guess_size=True
+    ):
         self.stream = stream
         self.size = None
         self.desc = desc
@@ -30,7 +32,12 @@ class StreamProgressWrapper(io.IOBase):
         self.stream.__enter__()
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]) -> Any:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Any:
         return self.stream.__exit__(exc_type, exc_val, exc_tb)
 
     def close(self) -> None:

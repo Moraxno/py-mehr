@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import pytest
 
 from io import BytesIO, SEEK_CUR, SEEK_END, SEEK_SET
@@ -18,7 +17,7 @@ THIRD_SEEK = -50
 EXPECTED_SIZE = 420
 
 BAD_SEEK_MODE_VALUES = [-1, -42, 3]
-BAD_SEEK_MODE_TYPES = [1.0, "2", b"1"] 
+BAD_SEEK_MODE_TYPES = [1.0, "2", b"1"]
 
 
 def bytes_stream():
@@ -37,20 +36,20 @@ def test_read():
     with StreamProgressWrapper(stream) as f:
         data = f.read(NUM_SMALL_READ)
 
-    assert(data == LINE_ODD[:NUM_SMALL_READ])
+    assert data == LINE_ODD[:NUM_SMALL_READ]
 
 
 def test_seek_tell():
     stream, final_pos = bytes_stream()
 
     with StreamProgressWrapper(stream) as f:
-        assert(f.tell() == 0)
+        assert f.tell() == 0
         f.seek(FIRST_SEEK)
-        assert(f.tell() == FIRST_SEEK)
+        assert f.tell() == FIRST_SEEK
         f.seek(SECOND_SEEK, SEEK_CUR)
-        assert(f.tell() == FIRST_SEEK + SECOND_SEEK)
+        assert f.tell() == FIRST_SEEK + SECOND_SEEK
         f.seek(THIRD_SEEK, SEEK_END)
-        assert(f.tell() == final_pos + THIRD_SEEK)
+        assert f.tell() == final_pos + THIRD_SEEK
 
 
 def test_bad_seek_mode_values():
@@ -67,7 +66,7 @@ def test_bad_seek_mode_types():
         with StreamProgressWrapper(stream) as f:
             with pytest.raises(TypeError):
                 f.seek(FIRST_SEEK, bad_mode)
-        assert(f.closed)
+        assert f.closed
 
 
 def test_neg_seek_position():
@@ -81,9 +80,9 @@ def test_far_seek():
     stream, final_pos = bytes_stream()
     with StreamProgressWrapper(stream) as f:
         pos = f.seek(final_pos * 100, SEEK_SET)
-        assert(pos == final_pos * 100)
+        assert pos == final_pos * 100
         rest_data = f.read(NUM_SMALL_READ)
-        assert(rest_data == b"")
+        assert rest_data == b""
 
 
 def test_close():
@@ -91,41 +90,41 @@ def test_close():
     with StreamProgressWrapper(stream) as f:
         f.close()
 
-    assert(f.closed)
-    assert(stream.closed)
+    assert f.closed
+    assert stream.closed
 
 
 def test_guessed_size():
     stream, final_pos = bytes_stream()
     with StreamProgressWrapper(stream, guess_size=True) as f:
-        assert(f.size == final_pos)
+        assert f.size == final_pos
 
 
 def test_expected_size():
     stream, final_pos = bytes_stream()
     with StreamProgressWrapper(stream, expected_size=EXPECTED_SIZE) as f:
-        assert(f.size == EXPECTED_SIZE)
+        assert f.size == EXPECTED_SIZE
 
 
 def test_readline():
     stream, final_pos = bytes_stream()
     with StreamProgressWrapper(stream) as f:
         line_odd = f.readline()
-        assert(line_odd == LINE_ODD)
+        assert line_odd == LINE_ODD
         line_even = f.readline()
-        assert(line_even == LINE_EVEN)
+        assert line_even == LINE_EVEN
         line_odd2 = f.readline()
-        assert(line_odd2 == LINE_ODD)
+        assert line_odd2 == LINE_ODD
         line_even2 = f.readline()
-        assert(line_even2 == LINE_EVEN)
+        assert line_even2 == LINE_EVEN
 
 
 def test_readlines():
     stream, final_pos = bytes_stream()
     with StreamProgressWrapper(stream) as f:
         lines = f.readlines(2 * len(LINE_ODD) + 2 * len(LINE_EVEN))
-        assert(len(lines) == 4)
-        assert(lines[0] == LINE_ODD)
-        assert(lines[1] == LINE_EVEN)
-        assert(lines[2] == LINE_ODD)
-        assert(lines[3] == LINE_EVEN)
+        assert len(lines) == 4
+        assert lines[0] == LINE_ODD
+        assert lines[1] == LINE_EVEN
+        assert lines[2] == LINE_ODD
+        assert lines[3] == LINE_EVEN
