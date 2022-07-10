@@ -16,6 +16,7 @@ setup(
     download_url=f"https://github.com/Moraxno/py-mehr/archive/refs/tags/v{VERSION}.tar.gz",
     install_requires=[
         "pytest",
+        "tqdm"
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
